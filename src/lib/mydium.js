@@ -1,60 +1,6 @@
-// const mediaConstraints = {
-//   audio: true,
-//   video: false
-// };
 
-// let audioContext;
 
 const song1 = './music/bensound-cute.mp3';
-
-// window.navigator.mediaDevices.getUserMedia(mediaConstraints)
-//   .then((stream) => {
-//     audioContext = new AudioContext(stream);
-//   })
-//   .catch((err) => {
-//     console.error(err);
-//   })
-//   .then(() => {
-//     play(song);
-//   });
-
-// const getAudioBuffer = function (url, callback) {
-//   const request = new XMLHttpRequest();
-//   request.open('GET', url, true);
-//   request.responseType = 'arraybuffer';
-
-//   request.onload = function () {
-//     audioContext.decodeAudioData(request.response, (buffer) => {
-//       callback(buffer);
-//     });
-//   }
-//   request.send();
-// };
-
-// const play = function (url) {
-//   getAudioBuffer(url, (buffer) => {
-//     const source = audioContext.createBufferSource();
-//     source.buffer = buffer;
-
-//     const analyserNode = audioContext.createAnalyser();
-
-//     const analyserNode = new AnalyserNode(audioContext, {
-//       fftSize: 64,
-//       minDecibels: -64,
-//       maxDecibels: -20,
-//       smoothingTimeConstant: 0.5
-//     });
-
-//     source.connect(analyserNode);
-//     analyserNode.connect(audioContext.destination);           
-//     source.start();
-     
-//     setInterval(() => {
-//       const dataArray = new Float32Array(analyserNode.frequencyBinCount);    
-//       analyserNode.getFloatFrequencyData(dataArray);
-//     }, 500);
-//   });
-// };
 
 export default class Mydium {
   constructor(song = '', callback, options) {
@@ -76,11 +22,6 @@ export default class Mydium {
     .then((stream) => {
       this._audioContext = new AudioContext(stream);
       this._source = this._audioContext.createBufferSource();   
-      // this._getAudioBuffer(song, (buffer) => {
-      //   console.log('hi there!!!');
-      //   this._source.buffer = buffer;
-      //   this._source.start();
-      // });
       this.play(song, callback)
     })
     .catch((err) => {
@@ -127,19 +68,24 @@ export default class Mydium {
         this._source.buffer = buffer;
         
         const analyserNode = new AnalyserNode(this._audioContext, {
-          fftSize: 32,
+          fftSize: 64,
           minDecibels: -64,
           maxDecibels: -20,
           smoothingTimeConstant: 0.5
         });
         
-        this._source.connect(analyserNode);
-        analyserNode.connect(this._audioContext.destination);           
+        let filter = this._audioContext.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(6000, this._audioContext.currentTime);
+        filter.gain.setValueAtTime(25, this._audioContext.currentTime);
+
         this._source.start();
+        this._source.connect(analyserNode);
+        this._source.connect(this._audioContext.destination);
 
         this._currentInterval = setInterval(() => {
-          const dataArray = new Float32Array(analyserNode.frequencyBinCount);    
-          analyserNode.getFloatFrequencyData(dataArray);
+          const dataArray = new Uint8Array(analyserNode.frequencyBinCount);    
+          analyserNode.getByteFrequencyData(dataArray);
           this._audioFrequencyData = Array.from(dataArray);
           if (onDataChangeCallback) onDataChangeCallback(this._audioFrequencyData);
         }, 100);
