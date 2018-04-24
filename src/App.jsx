@@ -1,36 +1,30 @@
 import React, { Component } from 'react';
-import Mydium from './lib/mydium';
-import styled from 'styled-components';
-import Visualizer from './components/Visualizer.jsx';
 
-const music = {
+// Components
+import RainbowSteps from './components/RainbowSteps.jsx';
+import { AppContainer as Container } from './components/styled_components/components.jsx';
+
+// TODO: Remove once you have a better way to grab music.
+const MUSIC = {
   cute: 'music/bensound-cute.mp3',
   energy: 'music/bensound-energy.mp3',
   summer: 'music/bensound-summer.mp3'
 };
 
-const Container = styled.div`
-  font-size: 0;
-  overflow: hidden;
-  background-color: black;
-  min-height: 100vh;
-  min-width: 100vw;
-  margin: 0;
-  padding: 0;
-`;
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: null
+      data: null,
+      song: MUSIC.energy
     };
   }
 
   render() {
+    let song = this.state.song;
     return (
       <Container className="App">
-        <Visualizer />
+        <RainbowSteps song={song} />
       </Container>
     );
   }

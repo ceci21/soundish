@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
-const music = {
+// TODO: Remove once you have a better way to grab music.
+const MUSIC = {
   cute: 'music/bensound-cute.mp3',
   energy: 'music/bensound-energy.mp3',
   summer: 'music/bensound-summer.mp3'
