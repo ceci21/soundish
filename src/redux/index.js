@@ -1,8 +1,10 @@
-import { combineReducers } from 'react-redux';
+import { combineReducers } from 'redux';
 
 import { songReducer, statusReducer } from './reducers';
 
-export default rootReducer = combineReducers ({
-  player: playerReducer,
+const rootReducer = combineReducers({
+  song: songReducer,
   status: statusReducer
 });
+
+export default rootReducer;

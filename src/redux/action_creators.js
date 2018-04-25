@@ -1,7 +1,7 @@
 // ACTION TYPES
 import {
   CHANGE_SONG,
-  START_PLAYER,
+  PLAY_PLAYER,
   STOP_PLAYER,
   PAUSE_PLAYER
 } from './action_types';
@@ -20,9 +20,9 @@ player.changeSong = (song) => {
   }
 };
 
-player.start = () => {
+player.play = () => {
   return {
-    type: START_PLAYER
+    type: PLAY_PLAYER
   };
 };
 

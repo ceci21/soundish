@@ -1,28 +1,7 @@
-import React, { Component } from 'react';
-import Mydium from '../lib/mydium';
+import React from 'react';
 import { RainbowStepsBar, RainbowStepsGraph } from './styled_components/components.jsx';
 
-class RainbowSteps extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			frequencyData: null
-		};
-		this.mydium;
-	}
-
-	// Callback provided to change the frequency data. This will be provided in play.
-	callback = (frequencyData) => {
-		if (frequencyData) {
-			this.setState({ frequencyData: frequencyData.slice() });
-		}
-	};
-
-	componentDidMount() {
-		const song = this.props.song ? this.props.song : null;
-		this.mydium = new Mydium(song, this.callback);
-	}
-
+export default class RainbowSteps extends React.Component {
 	createBars = (frequencyData, windowHeight) => {
 		if (!frequencyData) {
 			console.warn('No data is provided.');
@@ -36,23 +15,23 @@ class RainbowSteps extends Component {
 	};
 
 	render() {
-		if (this.state.frequencyData) {
-			let frequencyData = Array.from(this.state.frequencyData);
+		if (this.props.frequencyData) {			
+			let frequencyData = Array.from(this.props.frequencyData);
 			let length = frequencyData.length;
 			let windowHeight = window.innerHeight;
 
-			// Create bars for graph.
+			// Create bars
 			let bars = this.createBars(frequencyData, windowHeight);
 
+			// Create graph with bars
 			return (
 				<RainbowStepsGraph className="RainbowStepsGraph" columns={length}>
 					{bars}
 				</RainbowStepsGraph>
 			);
+
 		} else {
-			return <div style={{ color: '#fff' }}>Loading...</div>;
+			return <div style={{ color: '#fff' }}>Loading...</div>;			
 		}
 	}
 }
-
-export default RainbowSteps;

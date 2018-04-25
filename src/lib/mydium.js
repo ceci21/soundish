@@ -1,7 +1,7 @@
 // Ceci: A little audio library to interface over default audio API to make my life easier!!
 
 const defaultOptions = {
-  autoplay: true
+  autoplay: false
 };
 
 export default class Mydium {
@@ -17,8 +17,11 @@ export default class Mydium {
     this._audioContext = null;
     this._audioFrequencyData = [];
     this._currentInterval = null;
-    this._songChanged = true;
-    this._analyser = null;
+    this._analyserNode = null;
+    this._isPlaying = false;
+    this._needToRestart = true;
+    this._paused = false;
+    this._stream = null;
 
     const navigator = window.navigator;   
     const mediaConstraints = {
@@ -29,6 +32,7 @@ export default class Mydium {
     navigator.mediaDevices.getUserMedia(mediaConstraints)
     .then((stream) => {
       // Get audio context and create initial source.
+      this._stream = stream;      
       this._audioContext = new AudioContext(stream);
       this._source = this._audioContext.createBufferSource();
     
@@ -47,7 +51,6 @@ export default class Mydium {
       console.error(err);
     })
     .then(() => {
-      if (callback) callback();      
       console.log('Song is playing!');
     })
     .catch((err = 'Error unspecified') => {
@@ -72,79 +75,125 @@ export default class Mydium {
     // Stop the audio, and set the song and set whether or not it has been changed.
     this.stop();
     this._song = song;
-    this._songChanged = true;
+    this._needToRestart = true;
   }
 
-  stop = () => {
+  pause = (callback) => {
+    clearInterval(this._currentInterval);
+
+    this._audioContext.suspend();
+    this._isPlaying = false;
+    this._needToRestart = false; 
+    this._paused = true;
+    
+    if (callback) {
+      callback();
+    }
+  }
+
+  stop = (callback) => {
+    if (!this._isPlaying && !this._paused) {
+      return console.warn('Player has already stopped.');
+    }
     // Clear the interval that is giving back the frequency data b/c we don't need it anymore and it doesn't need to go through the callback again
     // ...and then stop the audio.
     clearInterval(this._currentInterval);
+
     this._audioContext.suspend();
+    this._isPlaying = false;
+    this._needToRestart = true; 
+    this._paused = false;
+
+    if (callback) {
+      callback();
+    }
+  }
+
+  _load = (callback) => {
+    this._audioContext = new AudioContext(this._stream);          
+    this._source.disconnect();
+    this._source = this._audioContext.createBufferSource();
+
+    this._getAudioBuffer(this._song, (buffer) => {
+
+      // Reset the buffer that you retrieved since the data has come back from getting the new audio's buffer
+      this._source.buffer = buffer;
+
+      // This feeds the audio from the source to the speakers.
+      this._source.connect(this._audioContext.destination);
+
+      
+      // Callback to indicate that song has loaded
+      callback();
+    });
   }
 
   play = (url, onDataChangeCallback) => {
+    // Prevents form replaying if song is the same
+    if (this._isPlaying && this._song === url) {
+      return console.error('song is the same');
+    } 
+
     // If no callback is provided, warn user about it.
     if (!onDataChangeCallback) {
       console.warn('No callback is provided to play.')
     }
 
-    // If a url is provided, play that instead.
-    if (url) {
-      this._songChanged = true;
+    if (this._paused && url) {
+      // URL is going to be ignored here
+      console.warn('because it is paused, we are ignoring the url');
+    } else if (!this._paused && url) {
+      // If not paused and url is provided, restart.            
+      this._needToRestart = true;
       this._song = url;
     }
 
-    if (this._songChanged) {
+    if (this._needToRestart) {
+      this._load(() => {
+        console.log('song loaded!');
 
-      // If the song has changed, then we will need to get the new audio buffer!
-      this._getAudioBuffer(this._song, (buffer) => {
-
-        // If there is already an analyser, disconnect it because it needs to be changed!
-        if (this._analyser) {
-          this._source.disconnect();
-        }
-
-        // Reset the buffer that you retrieved since the data has come back from getting the new audio's buffer
-        this._source.buffer = buffer;
-        
-        // Create a new analyser node.
-        const analyserNode = new AnalyserNode(this._audioContext, {
+        // Create a new analyserNode node.    
+        this._analyserNode = new AnalyserNode(this._audioContext, {
           fftSize: 64,
           minDecibels: -64,
           maxDecibels: -20,
           smoothingTimeConstant: 0.5
         });
 
-        // This starts the audio.
-        this._source.start();
-
-        // This feeds the audio through the analyser node.
-        this._source.connect(analyserNode);
-
-        // This feeds the audio from the source to the speakers.
-        this._source.connect(this._audioContext.destination);
+      // This feeds the audio through the analyser node.
+        this._source.connect(this._analyserNode);
 
         // As the music changes, update the frequency array.
-        this._currentInterval = setInterval(() => {
-
-          // Create data array and populate it with frequency data.
-          const dataArray = new Uint8Array(analyserNode.frequencyBinCount);    
-          analyserNode.getByteFrequencyData(dataArray);
-          this._audioFrequencyData = dataArray;
-
-          // If there is a callback, send back the frequency data, ---but as a copy---.
-          if (onDataChangeCallback) {
-            onDataChangeCallback(this._audioFrequencyData.slice());
-          }
-        }, 100);
-
-        // Set the analyser and whether or not the song has been changed.
-        this._analyser = analyserNode;
-        this._songChanged = false;
+        this._currentInterval = setInterval(this._setAudioFrequencyData.bind(this, onDataChangeCallback), 100);
+      
+        this._source.start();
+        this._needToRestart = false;
+        this._isPlaying = true;
+        this._paused = false;
       });
     } else {
       // Otherwise if song has NOT changed, simply resume where you started off.
+      this._currentInterval = setInterval(this._setAudioFrequencyData.bind(this, onDataChangeCallback), 100);
       this._audioContext.resume();
+      this._isPlaying = true;
+      this._needToRestart = false;
+      this._paused = false;
+    }
+  }
+
+  _setAudioFrequencyData = (callback) => {
+    if (this._analyserNode) {
+      // Create data array and populate it with frequency data.
+      const dataArray = new Uint8Array(this._analyserNode.frequencyBinCount);    
+      this._analyserNode.getByteFrequencyData(dataArray);
+      this._audioFrequencyData = dataArray;
+      
+      // If there is a callback, send back the frequency data, ---but as a copy---.
+      if (callback) {
+        callback(this._audioFrequencyData.slice());
+      }
+    } else {
+      console.warn('No analyser to be found');
     }
   }
 
@@ -152,4 +201,9 @@ export default class Mydium {
     // Send back a copy of the audio frequency data.
     return this._audioFrequencyData.slice();
   }
+
+  isPlaying = () => {
+    return this._isPlaying;
+  }
+
 }
