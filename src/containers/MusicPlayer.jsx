@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 
 import { player } from '../redux/action_creators';
 
-import UserControls from '../components/UserControls.jsx';
+import UserControls from '../containers/UserControls.jsx';
+import RainbowSteps from '../components/RainbowSteps.jsx';
 
 import Mydium from '../lib/mydium';
 
@@ -11,7 +12,8 @@ class MusicPlayer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			frequencyData: null
+			frequencyData: null,
+      Visualizer: (props) => <RainbowSteps {...props} /> // TODO: There's gotta be a better way to render component... 
 		};
 		this.musicPlayer = null;
 	}
@@ -61,9 +63,9 @@ class MusicPlayer extends React.Component {
 				this.pausePlayer();
 			}
     }
-    
+
 		// TODO: IDK maybe make this into redux state... might not really matter though
-		let Visualizer = (props) => <this.props.Visualizer {...props} />;
+		let Visualizer = (props) => <this.state.Visualizer {...props} />;
 		let frequencyData = this.state.frequencyData;
 		return (
 			<div className="MusicPlayer">
@@ -80,14 +82,5 @@ const mapStateToProps = ({ song, status }) => {
 		status
 	};
 };
-
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     changeSong: (song) => dispatch(player.changeSong(song)),
-//     start: () => dispatch(player.start()),
-//     stop: () => dispatch(player.stop()),
-//     pause: () => dispatch(player.pause())
-//   };
-// }
 
 export default connect(mapStateToProps)(MusicPlayer);

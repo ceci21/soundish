@@ -1,0 +1,11 @@
+- Look into shaders for visualizers
+- Add tracks to song and be able to modify tracks
+- Add equalizer
+- Be able to choose visualizers
+- Selection looper
+- Draggable pieces of song
+- Add server to see available music
+- Add filters
+- Upload music from computer to servers, and then send back music to client from server if song is selected and cache the instance on the client in the store.
+  Asks user if you want to save the song you're editing to the server before closing the tab. 
+  If yes, save the song in its current state to the server, if not, do not send anything back to server.

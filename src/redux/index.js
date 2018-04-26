@@ -1,10 +1,16 @@
 import { combineReducers } from 'redux';
 
-import { songReducer, statusReducer } from './reducers';
+// Importing reducers..
+import { 
+  songReducer, 
+  statusReducer, 
+  messageReducer 
+} from './reducers';
 
 const rootReducer = combineReducers({
   song: songReducer,
-  status: statusReducer
+  status: statusReducer,
+  messages: messagesReducer
 });
 
 export default rootReducer;

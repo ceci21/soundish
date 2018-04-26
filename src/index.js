@@ -2,10 +2,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-// Redux
-import { createStore } from 'redux';
+// Redux and associated middleware
+import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import rootReducer from './redux/index';
+import reduxThunk from 'redux-thunk';
+
 
 // Components
 import App from './App.jsx';
@@ -14,7 +16,7 @@ import App from './App.jsx';
 import './style.css';
 
 // Creating store for redux.
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, applyMiddleware(reduxThunk));
 
 ReactDOM.render((
   <Provider store={store}>
