@@ -6,6 +6,7 @@ export const PAUSE_PLAYER = 'PAUSE_PLAYER';
 
 // File action types
 export const UPLOAD_AUDIO = 'UPLOAD_AUDIO'; // TODO: Not being used
+export const RETRIEVE_AUDIO = 'RETRIEVE_AUDIO';
 
 // Message action types
 export const MODIFY_MESSAGES = 'MODIFY_MESSAGES';

@@ -47,6 +47,7 @@ export const statusReducer = (state = 'ON', action) => {
 // TODO: Should this default messages thing be here?
 const DEFAULT_MESSAGES = {
   fileUploadStatus: '',
+  fileRetrieveStatus: ''
 };
 
 export const messagesReducer = (state = DEFAULT_MESSAGES, action) => {
@@ -65,4 +66,15 @@ export const messagesReducer = (state = DEFAULT_MESSAGES, action) => {
     default:
       return state;
   };
+}
+
+export const audioReducer = (state = {}, action) => {
+  const { audioFiles } = action;
+
+  switch (action.type){
+    case (RECEIVE_AUDIO): 
+      return audioFiles;
+    default:
+      return state;
+  }
 }

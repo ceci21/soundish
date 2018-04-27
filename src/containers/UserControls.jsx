@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { player } from '../redux/action_creators';
+import actions from '../redux/action_creators';
+import AudioUploader from './AudioUploader.jsx';
+import MusicSelector from './MusicSelector.jsx';
 
 // TODO: Maybe move this into /containers ?
 // TODO: Add style to container of this
@@ -20,13 +22,6 @@ class UserControls extends React.Component {
     });
   }
 
-  // TODO: Change name and stuff
-  eventHandler = ({ target }) => {
-    const files = target.files;
-    console.log(target.files);
-    this.setState({ files })
-  }
-
   render() {
     const { status, song } = this.props;
 
@@ -38,7 +33,7 @@ class UserControls extends React.Component {
         <button disabled={(status === 'ON')} onClick={this.props.play}>play</button>
         <button disabled={(status === 'OFF')} onClick={this.props.stop}>Stop</button>
         <button disabled={(status === 'PAUSED' || status === 'OFF')} onClick={this.props.pause}>Pause</button>
-        <input type="file" onChange={this.eventHandler} accept=".mp3" multiple />
+        <AudioUploader />
         <DropDown />
       </div>
     );
@@ -54,10 +49,11 @@ const mapStateToProps = ({ song, status }) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeSong: (song) => dispatch(player.changeSong(song)),
-    play: () => dispatch(player.play()),
-    stop: () => dispatch(player.stop()),
-    pause: () => dispatch(player.pause())
+    changeSong: (song) => dispatch(actions.player.changeSong(song)),
+    play: () => dispatch(actions.player.play()),
+    stop: () => dispatch(actions.player.stop()),
+    pause: () => dispatch(actions.player.pause()),
+    uploadAudio: (data) => dispatch(actions.file.uploadAudio(data))
   };
 }
 

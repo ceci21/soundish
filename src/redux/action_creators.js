@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import SERVER_URL from '../CONSTANTS';
+import { SERVER_URL } from '../CONSTANTS';
 
 // ACTION TYPES
 import {
@@ -13,7 +13,7 @@ import {
 } from './action_types';
 
 // PLAYER ACTION CREATORS
-export const player = {};
+const player = {};
 
 player.changeSong = (song) => {
   if (!song) {
@@ -47,15 +47,13 @@ player.pause = () => {
 
 
 // FILE ACTION CREATORS
-export const file = {};
+const file = {};
 
-file.uploadAudio = (data /*, callback */) => { // TODO: Do I need a callback?
-  console.log('Uploading files...'); // TODO: Remove later
-
+file.uploadAudio = (files /*, callback */) => { // TODO: Do I need a callback?
   const endpoint = '/audio/upload';
 
   return (dispatch) => {
-    axios.post(`${SERVER_URL}${endpoint}`, data)
+    axios.post(`${SERVER_URL}${endpoint}`, files)
     .then((res = '') => {
       console.log('Upload was successful.'); // TODO: Remove later
       dispatch({
@@ -73,4 +71,9 @@ file.uploadAudio = (data /*, callback */) => { // TODO: Do I need a callback?
       })
     });
   }
+};
+
+export default {
+  player,
+  file
 };

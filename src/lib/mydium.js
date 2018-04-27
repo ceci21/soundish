@@ -120,7 +120,7 @@ export default class Mydium {
       this._source.buffer = buffer;
 
       // This feeds the audio from the source to the speakers.
-      this._source.connect(this._audioContext.destination);
+      // this._source.connect(this._audioContext.destination); // TODO: Put this back when you want the music to play!!
 
       
       // Callback to indicate that song has loaded

@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { player } from '../redux/action_creators';
-
 import UserControls from '../containers/UserControls.jsx';
+import MusicPlayerInfo from './MusicPlayerInfo.jsx';
 import RainbowSteps from '../components/RainbowSteps.jsx';
 
 import Mydium from '../lib/mydium';

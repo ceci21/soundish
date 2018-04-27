@@ -4,13 +4,15 @@ import { combineReducers } from 'redux';
 import { 
   songReducer, 
   statusReducer, 
-  messageReducer 
+  messagesReducer,
+  audioFilesReducer
 } from './reducers';
 
 const rootReducer = combineReducers({
   song: songReducer,
   status: statusReducer,
-  messages: messagesReducer
+  messages: messagesReducer,
+  audioFiles: audioFilesReducer
 });
 
 export default rootReducer;
