@@ -5,14 +5,16 @@ import {
   songReducer, 
   statusReducer, 
   messagesReducer,
-  audioFilesReducer
+  audioFileNamesReducer,
+  audioFileDataReducer
 } from './reducers';
 
 const rootReducer = combineReducers({
   song: songReducer,
   status: statusReducer,
   messages: messagesReducer,
-  audioFiles: audioFilesReducer
+  audioFileNames: audioFileNamesReducer,
+  audioFileData: audioFileDataReducer
 });
 
 export default rootReducer;

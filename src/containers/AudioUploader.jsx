@@ -7,14 +7,12 @@ class AudioUploader extends React.Component {
   audioFilesHandler = (e) => {
     e.preventDefault();
     const files = e.target.files;
-    console.log(files);
 
     if (files.length < 1) {
       throw 'No uploaded files.';
     }
 
     const formData = new FormData();
-
     let fieldName = '';
 
     if (files.length > 1) {
@@ -28,12 +26,16 @@ class AudioUploader extends React.Component {
       if (file.type !== 'audio/mp3') {
         throw 'Not an .mp3 file';
       }
-
+      
       const fileName = (file.name.substring(0, file.name.length - 4) + '_' + Date.now() + '.mp3').split(' ').join('_');
       formData.append(fieldName, file, fileName);
     }
 
-    this.props.uploadAudio(formData);
+    this.props.uploadAudio(formData, () => {
+      console.log('in double callback');      
+      this.props.retrieveServerAudioNames(() => {
+      });
+    });
   }
 
   render() {
@@ -47,7 +49,9 @@ class AudioUploader extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    uploadAudio: (data) => dispatch(actions.file.uploadAudio(data))
+    uploadAudio: (...args) => dispatch(actions.file.uploadAudio(...args)),
+    retrieveServerAudioNames: (...args) => dispatch(actions.file.retrieveServerAudioNames(...args))
+
   };
 }
 

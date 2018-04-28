@@ -6,32 +6,34 @@ import {
   PAUSE_PLAYER,
   UPLOAD_AUDIO, // TODO: Not being used
   MODIFY_MESSAGES,
-  RETRIEVE_AUDIO
+  RETRIEVE_AUDIO_NAMES,
+  RETRIEVE_AUDIO_DATA
 } from './action_types';
 
 // TODO: How do I organize this stuff??
+// TODO: DRY
 
 // Action objects for player
-const changePlayerSongAction = (song) => {
+export const changePlayerSongAction = (song) => {
   return {
     type: CHANGE_SONG,
     song
   };
 };
 
-const playPlayerAction = () => {
+export const playPlayerAction = () => {
   return {
     type: PLAY_PLAYER
   };
 };
 
-const stopPlayerAction = () => {
+export const stopPlayerAction = () => {
   return {
     type: STOP_PLAYER
   };
 };
 
-const pausePlayerAction = () => {
+export const pausePlayerAction = () => {
   return {
     type: PAUSE_PLAYER
   };
@@ -41,7 +43,7 @@ const pausePlayerAction = () => {
 
 
 // Action objects for file.uploadAudio
-const uploadAudioSuccessMessageAction = () => {
+export const uploadAudioSuccessMessageAction = () => {
   return {
     type: MODIFY_MESSAGES,
     messageKey: 'fileUploadStatus',
@@ -49,7 +51,7 @@ const uploadAudioSuccessMessageAction = () => {
   };
 };
 
-const uploadAudioFailureMessageAction = () => {
+export const uploadAudioFailureMessageAction = () => {
   return {
     type: MODIFY_MESSAGES,
     messageKey: 'fileRetrieveStatus',
@@ -62,7 +64,7 @@ const uploadAudioFailureMessageAction = () => {
 
 
 // Action objects for file.retrieveServerAudio
-const retrieveServerAudioSuccessMessageAction = () => {
+export const retrieveServerAudioNamesSuccessMessageAction = () => {
   return {
     type: MODIFY_MESSAGES,
     messageKey: 'fileRetrieveStatus',
@@ -70,17 +72,41 @@ const retrieveServerAudioSuccessMessageAction = () => {
   };
 };
 
-const retrieveServerAudioSuccessLoadAction = (audioFiles) => {
+export const retrieveServerAudioNamesSuccessLoadAction = (audioFileNames) => {
   return {
-    type: RETRIEVE_AUDIO,
-    audioFiles: audioFiles
+    type: RETRIEVE_AUDIO_NAMES,
+    payload: audioFileNames
   };
 };
 
-const retrieveServerAudioFailureMessageAction = () => {
+export const retrieveServerAudioNamesFailureMessageAction = () => {
   return {
     type: MODIFY_MESSAGES,
     messageKey: 'fileRetrieveStatus',
     message: 'Error receiving audio.'
   };
 };
+
+export const retrieveServerAudioDataSuccessLoadAction = (data) => {
+  console.log('???', data);
+  return {
+    type: RETRIEVE_AUDIO_DATA,
+    payload: data
+  };
+};
+
+export const retrieveServerAudioDataSuccessMessageAction = () => {
+  return {
+    type: MODIFY_MESSAGES,
+    messageKey: 'fileRetrieveStatus',
+    message: 'Successfully received audio data!'
+  };
+};
+
+export const retrieveServerAudioDataFailureMessageAction = () => {
+  return {
+    type: MODIFY_MESSAGES,
+    messageKey: 'fileRetrieveStatus',
+    message: 'Failure in receiving audio data.'
+  };
+}

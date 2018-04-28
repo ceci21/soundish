@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { AppContainer as Container } from './components/styled_components/components.jsx';
 import RainbowSteps from './components/RainbowSteps.jsx';
-import MusicPlayer from './containers/MusicPlayer.jsx';
+import AudioPlayer from './containers/AudioPlayer.jsx';
 
 // TODO: Remove once you have a better way to grab music.
 class App extends Component {
@@ -15,7 +15,7 @@ class App extends Component {
   render() {
     return (
       <Container className="App">
-        <MusicPlayer  
+        <AudioPlayer  
           Visualizer={(props) => <this.state.Visualizer {...props} />} />
       </Container>
     );

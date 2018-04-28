@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-class MusicPlayerInfo extends React.Component {
+class AudioPlayerInfo extends React.Component {
   render() {
     const { fileUploadStatus } = this.props.messages;
     return (
@@ -15,8 +15,8 @@ class MusicPlayerInfo extends React.Component {
 
 const mapStateToProps = ({ messages }) => {
   return {
-    messages: Object.from({}, messages)
+    messages: Object.assign({}, messages)
   };
 };
 
-export default connect(mapStateToProps)(MusicPlayerInfo);
+export default connect(mapStateToProps)(AudioPlayerInfo);

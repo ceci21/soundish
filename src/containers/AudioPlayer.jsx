@@ -1,20 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import UserControls from '../containers/UserControls.jsx';
-import MusicPlayerInfo from './MusicPlayerInfo.jsx';
+import AudioUserControls from '../containers/AudioUserControls.jsx';
+import AudioPlayerInfo from './AudioPlayerInfo.jsx';
 import RainbowSteps from '../components/RainbowSteps.jsx';
 
 import Mydium from '../lib/mydium';
 
-class MusicPlayer extends React.Component {
+class AudioPlayer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			frequencyData: null,
       Visualizer: (props) => <RainbowSteps {...props} /> // TODO: There's gotta be a better way to render component... 
 		};
-		this.musicPlayer = null;
+		this.audioPlayer = null;
 	}
 
 	componentDidMount() {
@@ -22,7 +22,7 @@ class MusicPlayer extends React.Component {
 		const options = {
 			autoplay: true
 		};
-		this.musicPlayer = new Mydium(song, this.callback, options);
+		this.audioPlayer = new Mydium(song, this.callback, options);
 	}
 
 	callback = (frequencyData) => {
@@ -32,30 +32,30 @@ class MusicPlayer extends React.Component {
 	};
 
 	playPlayer = (song) => {
-    this.musicPlayer.play(song, this.callback);
+    this.audioPlayer.play(song, this.callback);
 
 	};
 
 	stopPlayer = () => {
-    this.musicPlayer.stop(() => {
+    this.audioPlayer.stop(() => {
       console.log('stopped');
     });
 	};
 
 	pausePlayer = () => {
-		this.musicPlayer.pause(() => {
+		this.audioPlayer.pause(() => {
 			console.log('paused');
 		});
 	};
 
 	render() {
 
-		if (this.musicPlayer) {
-			const { song, status } = this.props; // From redux store
-			const isPlaying = this.musicPlayer.isPlaying();
+		if (this.audioPlayer) {
+			const { song, status, audioFileData } = this.props; // From redux store
+			const isPlaying = this.audioPlayer.isPlaying();
 
 			if (status === 'ON' && !isPlaying) {
-				this.playPlayer(song);
+				this.playPlayer(audioFileData);
 			} else if (status === 'OFF' && isPlaying) {
 				this.stopPlayer();
 			} else if (status === 'PAUSED' && isPlaying) {
@@ -67,19 +67,20 @@ class MusicPlayer extends React.Component {
 		let Visualizer = (props) => <this.state.Visualizer {...props} />;
 		let frequencyData = this.state.frequencyData;
 		return (
-			<div className="MusicPlayer">
-				<UserControls />
+			<div className="AudioPlayer">
+				<AudioUserControls />
 				<Visualizer frequencyData={frequencyData} />
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ({ song, status }) => {
+const mapStateToProps = ({ song, status, audioFileData }) => {
 	return {
 		song,
-		status
+		status,
+		audioFileData
 	};
 };
 
-export default connect(mapStateToProps)(MusicPlayer);
+export default connect(mapStateToProps)(AudioPlayer);

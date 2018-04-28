@@ -13,7 +13,7 @@ export default class Mydium {
       }
     */
 
-    this._song = song;
+    this._audioData = song;
     this._audioContext = null;
     this._audioFrequencyData = [];
     this._currentInterval = null;
@@ -74,7 +74,7 @@ export default class Mydium {
   setSong = (song) => {
     // Stop the audio, and set the song and set whether or not it has been changed.
     this.stop();
-    this._song = song;
+    this._audioData = song;
     this._needToRestart = true;
   }
 
@@ -110,27 +110,39 @@ export default class Mydium {
   }
 
   _load = (callback) => {
+    // This feeds the audio from the source to the speakers.
+    // this._source.connect(this._audioContext.destination); // TODO: Put this back when you want the music to play!!
     this._audioContext = new AudioContext(this._stream);          
     this._source.disconnect();
     this._source = this._audioContext.createBufferSource();
+    console.log(this._audioData);
+    if (!this._audioData.buffer) {
+      this._getAudioBuffer(this._audioData.name, (buffer) => {
+        // Reset the buffer that you retrieved since the data has come back from getting the new audio's buffer
+        this._source.buffer = buffer;
+        // Callback to indicate that song has loaded
+        callback();
+      });
+    } else {
+      this._audioContext.decodeAudioData(this._audioData.buffer, (audioBuffer) => {
+        this._source.buffer = audioBuffer;
+        callback();
+      });
 
-    this._getAudioBuffer(this._song, (buffer) => {
-
-      // Reset the buffer that you retrieved since the data has come back from getting the new audio's buffer
-      this._source.buffer = buffer;
-
-      // This feeds the audio from the source to the speakers.
-      // this._source.connect(this._audioContext.destination); // TODO: Put this back when you want the music to play!!
-
-      
-      // Callback to indicate that song has loaded
-      callback();
-    });
+    } 
   }
 
-  play = (url, onDataChangeCallback) => {
+  play = (audioData, onDataChangeCallback) => {
+    /*
+      audioData object looks like this:
+      { 
+        name: 'string',
+        buffer: Uint8Array
+      }
+    */
+  
     // Prevents form replaying if song is the same
-    if (this._isPlaying && this._song === url) {
+    if (this._isPlaying && this._audioData.name === audioData.name) {
       return console.error('song is the same');
     } 
 
@@ -139,13 +151,16 @@ export default class Mydium {
       console.warn('No callback is provided to play.')
     }
 
-    if (this._paused && url) {
-      // URL is going to be ignored here
-      console.warn('because it is paused, we are ignoring the url');
-    } else if (!this._paused && url) {
-      // If not paused and url is provided, restart.            
+    // // Decide if you need to get a new buffer
+    // if (this._paused && audioData.buffer) {
+    //   // audioData is going to be ignored here // TODO: why did I make this choice??
+    //   console.warn('because it is paused, we are ignoring the audioData');
+    // } 
+    console.log(audioData);
+    if (!this._paused && audioData.buffer) {
+      // If not paused and audioData with buffer is provided, restart.            
       this._needToRestart = true;
-      this._song = url;
+      this._audioData = Object.assign({}, audioData);
     }
 
     if (this._needToRestart) {
@@ -162,6 +177,8 @@ export default class Mydium {
 
       // This feeds the audio through the analyser node.
         this._source.connect(this._analyserNode);
+
+        this._source.connect(this._audioContext.destination);
 
         // As the music changes, update the frequency array.
         this._currentInterval = setInterval(this._setAudioFrequencyData.bind(this, onDataChangeCallback), 100);
