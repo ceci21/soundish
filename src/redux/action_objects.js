@@ -1,6 +1,6 @@
 // ACTION TYPES
 import {
-  CHANGE_SONG,
+  CHANGE_AUDIO,
   PLAY_PLAYER,
   STOP_PLAYER,
   PAUSE_PLAYER,
@@ -14,10 +14,10 @@ import {
 // TODO: DRY
 
 // Action objects for player
-export const changePlayerSongAction = (song) => {
+export const changePlayerAudioAction = (audioFile) => {
   return {
-    type: CHANGE_SONG,
-    song
+    type: CHANGE_AUDIO,
+    audioFile
   };
 };
 
@@ -88,7 +88,6 @@ export const retrieveServerAudioNamesFailureMessageAction = () => {
 };
 
 export const retrieveServerAudioDataSuccessLoadAction = (data) => {
-  console.log('???', data);
   return {
     type: RETRIEVE_AUDIO_DATA,
     payload: data

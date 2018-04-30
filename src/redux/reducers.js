@@ -1,5 +1,5 @@
 import {
-	CHANGE_SONG,
+	CHANGE_AUDIO,
 	PLAY_PLAYER,
 	STOP_PLAYER,
 	PAUSE_PLAYER,
@@ -22,18 +22,19 @@ const musicKeysArr = Object.keys(MUSIC);
 const randomSongIndex = Math.floor(musicKeysArr.length * Math.random());
 const RANDOM_SONG = MUSIC[musicKeysArr[randomSongIndex]];
 
-export const songReducer = (state = RANDOM_SONG, action) => {
+export const currentAudioReducer = (state = {}, action) => {
 	// TODO: Remove default music as a random one
+	console.log(action.audioFile);
 	switch (action.type) {
-		case CHANGE_SONG:
-			return action.song;
+		case CHANGE_AUDIO:
+			return action.audioFile;
 		default:
 			return state;
 	}
 };
 
 // TODO: Possibly rename this to player status reducer...
-export const statusReducer = (state = 'ON', action) => {
+export const statusReducer = (state = 'OFF', action) => {
 	switch (action.type) {
 		case PLAY_PLAYER:
 			return 'ON';
@@ -83,21 +84,36 @@ export const audioFileNamesReducer = (state = [], action) => {
 
 // TODO: Audio file data should be an array.
 export const audioFileDataReducer = (state = [], action) => {
+	// TODO: It might be good to actually have this state as an object and grab the keys and match the name of the audio data to the object... Idk?
 	const { payload } = action;
-	console.log('??????????', payload, state, action);
-
-	for (let i = 0; i < state.length; i++) {
-		if (payload.name === state[i].name) {
-			return state;
-		}
-	}
-
-	const newAudioFileData = state.slice().push(payload);
-	console.log(newAudioFileData);
-
 	switch (action.type) {
     case RETRIEVE_AUDIO_DATA:
-      return newAudioFileData;
+			// If the payload doesn't have the right properties for the audio data, then return the previous state.
+			if (!payload.name || !payload.buffer) {
+				// TODO: Do something about this error somehow
+				console.error('Payload does not have proper data. Returning current state.');
+				return state; 
+			}
+
+			// Check if the audio name already exists.			
+			for (let i = 0; i < state.length; i++) {
+				if (payload.name === state[i].name) {
+					return state;
+				}
+			}
+
+			// Create new data object.
+			let incomingData = null;
+			let audioFileData = state.slice();
+			incomingData = {
+				name: payload.name,
+				buffer: payload.buffer.slice()
+			};
+			
+			// Push data onto new state.
+			audioFileData.push(incomingData);
+			
+      return audioFileData;
     default:
       return state;
 	}

@@ -15,7 +15,7 @@ class AudioUserControls extends React.Component {
     };
   }
   
-  songOptions = () => {
+  currentAudioOptions = () => {
     const files = Array.from(this.state.files);
     return files.map((file, i) => {
       return <option key={i} value={file.name}>{file.name}</option>;
@@ -23,9 +23,9 @@ class AudioUserControls extends React.Component {
   }
 
   render() {
-    const { status, song } = this.props;
+    const { status, currentAudio } = this.props;
 
-    const DropDown = () => ((this.state.files) ? <select>{this.songOptions}</select> : <div />);
+    const DropDown = () => ((this.state.files) ? <select>{this.currentAudioOptions}</select> : <div />);
 
     return (
       <div className="AudioUserControls">
@@ -41,16 +41,16 @@ class AudioUserControls extends React.Component {
   }
 }
 
-const mapStateToProps = ({ song, status }) => {
+const mapStateToProps = ({ currentAudio, status }) => {
   return {
-    song,
+    currentAudio,
     status
   };
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeSong: (song) => dispatch(actions.player.changeSong(song)),
+    changePlayerAudio: (currentAudio) => dispatch(actions.player.changeAudio(currentAudio)),
     play: () => dispatch(actions.player.play()),
     stop: () => dispatch(actions.player.stop()),
     pause: () => dispatch(actions.player.pause()),

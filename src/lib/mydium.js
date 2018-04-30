@@ -115,7 +115,6 @@ export default class Mydium {
     this._audioContext = new AudioContext(this._stream);          
     this._source.disconnect();
     this._source = this._audioContext.createBufferSource();
-    console.log(this._audioData);
     if (!this._audioData.buffer) {
       this._getAudioBuffer(this._audioData.name, (buffer) => {
         // Reset the buffer that you retrieved since the data has come back from getting the new audio's buffer
@@ -124,7 +123,7 @@ export default class Mydium {
         callback();
       });
     } else {
-      this._audioContext.decodeAudioData(this._audioData.buffer, (audioBuffer) => {
+      this._audioContext.decodeAudioData(this._audioData.buffer.slice(), (audioBuffer) => {
         this._source.buffer = audioBuffer;
         callback();
       });
@@ -156,7 +155,6 @@ export default class Mydium {
     //   // audioData is going to be ignored here // TODO: why did I make this choice??
     //   console.warn('because it is paused, we are ignoring the audioData');
     // } 
-    console.log(audioData);
     if (!this._paused && audioData.buffer) {
       // If not paused and audioData with buffer is provided, restart.            
       this._needToRestart = true;
@@ -165,7 +163,7 @@ export default class Mydium {
 
     if (this._needToRestart) {
       this._load(() => {
-        console.log('song loaded!');
+        console.log('Song loaded!');
 
         // Create a new analyserNode node.    
         this._analyserNode = new AnalyserNode(this._audioContext, {
@@ -178,7 +176,7 @@ export default class Mydium {
       // This feeds the audio through the analyser node.
         this._source.connect(this._analyserNode);
 
-        this._source.connect(this._audioContext.destination);
+        // this._source.connect(this._audioContext.destination); // TODO: Toggle when you want to play or stop music from playing
 
         // As the music changes, update the frequency array.
         this._currentInterval = setInterval(this._setAudioFrequencyData.bind(this, onDataChangeCallback), 100);

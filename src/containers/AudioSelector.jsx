@@ -8,20 +8,32 @@ class AudioSelector extends React.Component {
   }
 
   selectAudioNameHandler = (e) => {
-    console.log('selected audio')    
+    if (e.target.value === 'default-text') {
+      return;
+    }
     const audioFileName = e.target.value;
     this.props.retrieveServerAudioData(audioFileName);
+  }
+
+  selectAudioDataHandler = (e) => {
+    if (e.target.value === 'default-text') {
+      return;
+    }
+    const index = e.target.value;
+    const audioFile = this.props.audioFileData[index];
+    console.log(this.props.audioFileData, index, audioFile);
+    this.props.changePlayerAudio(audioFile);
   }
 
   createAudioNameSelector = () => {
     // TODO: Create a selector that lets you select multiple audio files.
     const { audioFileNames } = this.props;
-    console.log(audioFileNames);
     if (audioFileNames) {
       return (
         <div>
-          <h5>Select audio to download.</h5>
+          Select audio to download.
           <select onChange={this.selectAudioNameHandler}>
+            <option key="default-text" value="default-text">Download audio</option>
             {
               audioFileNames.map((name, i) => {
                 return <option key={i}>{ name }</option>
@@ -37,15 +49,16 @@ class AudioSelector extends React.Component {
 
   createAudioDataSelector = () => {
     const { audioFileData } = this.props;
-    console.log(audioFileData);
     if (audioFileData) {
       return (
         <div>
-          <h5>Select audio that you have downloaded to play.</h5>
+          Select audio that you have downloaded to play.
           <select onChange={this.selectAudioDataHandler}>
+            <option key="default-text" value="default-text">Audio</option>
             {
-              audioFileData.map((name, i) => {
-                return <option key={i}>{ name }</option>
+              audioFileData.map((data, i) => {
+                const name = data.name;
+                return <option key={i} value={i}>{ name }</option>
               })
             }
           </select>
@@ -59,8 +72,8 @@ class AudioSelector extends React.Component {
   render() {
     return (
       <div className="MusicSelector">
-        { this.createAudioNameSelector() }
-        { this.createAudioDataSelector() }
+        <div>{ this.createAudioNameSelector() }</div>
+        <div>{ this.createAudioDataSelector() }</div>
       </div>
     );
   }
@@ -77,7 +90,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     retrieveServerAudioNames: (...args) => dispatch(actions.file.retrieveServerAudioNames(...args)),
     retrieveServerAudioData: (...args) => dispatch(actions.file.retrieveServerAudioData(...args)),
-    play: (...args) => dispatch(actions.player.play(...args))
+    changePlayerAudio: (...args) => dispatch(actions.player.changeAudio(...args))
   };
 };
 

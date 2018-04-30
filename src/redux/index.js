@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 
 // Importing reducers..
 import { 
-  songReducer, 
+  currentAudioReducer, 
   statusReducer, 
   messagesReducer,
   audioFileNamesReducer,
@@ -10,7 +10,7 @@ import {
 } from './reducers';
 
 const rootReducer = combineReducers({
-  song: songReducer,
+  currentAudio: currentAudioReducer,
   status: statusReducer,
   messages: messagesReducer,
   audioFileNames: audioFileNamesReducer,

@@ -1,13 +1,17 @@
 import styled from 'styled-components';
 
 export const AppContainer = styled.div`
-  font-size: 0;
+  font-size: 12px;
   overflow: hidden;
   background-color: black;
   min-height: 100vh;
   min-width: 100vw;
   margin: 0;
   padding: 0;
+`;
+
+export const AudioPlayerContainer = styled.div`
+  color: white;
 `;
 
 export const RainbowStepsBar = styled.div.attrs({

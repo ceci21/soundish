@@ -4,7 +4,7 @@ import { SERVER_URL } from '../CONSTANTS';
 
 // TODO: Do something about these action objects!!!
 import {
-  changePlayerSongAction,
+  changePlayerAudioAction,
   playPlayerAction,
   stopPlayerAction,
   pausePlayerAction,
@@ -21,15 +21,16 @@ import {
 // PLAYER ACTION CREATORS
 const player = {};
 
-player.changeSong = (song) => {
-  if (!song) {
+player.changeAudio = (audioFile) => {
+  console.log('abcd', audioFile);
+  if (!audioFile) {
     console.log('No song provided.');
   } else {
-    return changePlayerSongAction();
+    return changePlayerAudioAction(audioFile);
   }
 };
 
-player.play = () => playPlayerAction();
+player.play = (audio) => playPlayerAction(audio);
 
 player.stop = () => stopPlayerAction();
 

@@ -32,7 +32,6 @@ class AudioUploader extends React.Component {
     }
 
     this.props.uploadAudio(formData, () => {
-      console.log('in double callback');      
       this.props.retrieveServerAudioNames(() => {
       });
     });
@@ -41,6 +40,7 @@ class AudioUploader extends React.Component {
   render() {
     return (
       <div className="AudioUploader">
+        Upload audio files to server.
         <input type="file" accept=".mp3" onChange={this.audioFilesHandler} multiple />
       </div>
     );

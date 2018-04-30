@@ -14,7 +14,7 @@ class App extends Component {
 
   render() {
     return (
-      <Container className="App">
+      <Container>
         <AudioPlayer  
           Visualizer={(props) => <this.state.Visualizer {...props} />} />
       </Container>

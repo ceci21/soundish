@@ -40,7 +40,7 @@ export default class RainbowSteps extends React.Component {
 			);
 
 		} else {
-			return <div style={{ color: '#fff' }}>Loading...</div>; // TODO: Come up with better loading component, or simply load it up in visualizer?
+			return <div>No audio loaded.</div>; // TODO: Come up with better loading component, or simply load it up in visualizer?
 		}
 	}
 }
