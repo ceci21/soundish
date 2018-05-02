@@ -1,5 +1,3 @@
-// TODO: Remove playground
-import './PLAYGROUND';
 
 // React
 import React from 'react';
